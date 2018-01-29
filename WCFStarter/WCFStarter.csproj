@@ -73,6 +73,10 @@
       <Project>{B76C9EF2-BF1B-4BA7-BB0B-C16D273B260F}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WCFService.BL\WCFService.BL.csproj">
+      <Project>{F92775C8-EAE3-4356-ACDC-F2F8CC18FFF0}</Project>
+      <Name>WCFService.BL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WCFService\WCFService.csproj">
       <Project>{32fea96b-abbc-4a17-9db6-a07f60f1d1c1}</Project>
       <Name>WCFService</Name>

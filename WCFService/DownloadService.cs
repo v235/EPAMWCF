@@ -9,118 +9,91 @@ using System.ServiceModel.Web;
 using Messages;
 using NServiceBus;
 using System.ServiceModel;
+using WCFService.ResponseManager;
+using WCFService.BL;
 
 namespace WCFService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class DownloadService : IDownloadService
     {
-        private readonly ITaskRepository _taskRepository;
+        private readonly IMainController _mainController;
+        private readonly IResponseProvider _responseProvider;
 
-        public DownloadService(ITaskRepository taskRepository)
+        public DownloadService(IMainController mainController,
+            IResponseProvider responseProvider)
         {
-            _taskRepository = taskRepository;
+            _mainController = mainController;
+            _responseProvider = responseProvider;
         }
 
-        public PlaceTask CreateTask(string url)
+        public PlaceTask CreateNewTask(string url)
         {
-            PlaceTask cTask = new PlaceTask();
             try
             {
-                cTask.TaskId = _taskRepository.AddTask(url);
+                if (!string.IsNullOrEmpty(url))
+                {
+                    var newTask = _mainController.Create(url);
+                    _responseProvider.ResponseCreated(WebOperationContext.Current);
+                    return newTask;
+                }
             }
             catch
             {
-                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
+                _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+                return null;
             }
-            SendCommand(cTask);
-            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
-            return cTask;
-            
+
+            _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+            return null;
         }
 
         public TaskStatus GetTaskStatus(string id)
         {
             try
             {
-                TaskEntity task = _taskRepository.GetTaskById(Convert.ToInt32(id));
-                TaskStatus taskStatus = new TaskStatus()
+                if (!string.IsNullOrEmpty(id))
                 {
-                    Id = task.Id,
-                    Status=task.Status
-                };
-                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-                return (taskStatus);
+                    var taskStatus = _mainController.GetStatus(id);
+                    _responseProvider.ResponseOk(WebOperationContext.Current);
+                    return taskStatus;
+                }
             }
             catch
             {
-                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
-                return new TaskStatus();
+                _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+                return null;
             }
+
+            _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+            return null;
         }
 
         public Stream Download(string id)
         {
             try
             {
-
-                TaskEntity task = _taskRepository.GetTaskById(Convert.ToInt32(id));
-                if (string.Equals(task.Status, "done", StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(id))
                 {
-                    FileInfo fi = new FileInfo(task.DownloadPath);
-                    if (fi.Exists)
+                    string fileName = string.Empty;
+                    var outPutStream = _mainController.Download(id, ref fileName);
+                    if (outPutStream != null)
                     {
-                        WebOperationContext.Current.OutgoingResponse.ContentType = "application/octet-stream";
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add("content-disposition", "inline; filename=" +fi.Name);
-                        FileStream stream = new FileStream(task.DownloadPath, FileMode.Open, FileAccess.Read);
-                        byte[] buffer = new byte[4096];
-                        int bytesRead;
-                        using (Stream responseStream = response.GetResponseStream())
-                        {
-
-                            do
-                            {
-                                bytesRead = stream.Read(buffer, 0, buffer.Length);
-                                return Response.OutputStream.Write(buffer, 0, bytesRead);
-                            } while (bytesRead != 0);
-                        }
-                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-                       // return (fs);
+                        _responseProvider.ResponseContentType(WebOperationContext.Current);
+                        _responseProvider.ResponseAddHeaders(WebOperationContext.Current, fileName);
+                        _responseProvider.ResponseOk(WebOperationContext.Current);
+                        return outPutStream;
                     }
                 }
             }
             catch
             {
-                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
+                _responseProvider.ResponseBadRequest(WebOperationContext.Current);
                 return null;
             }
-            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
+
+            _responseProvider.ResponseBadRequest(WebOperationContext.Current);
             return null;
         }
-        #region NSB
-        private async void SendCommand(PlaceTask task)
-        {
-            var endpointConfiguration = new EndpointConfiguration("WCFService");
-
-            var transport = endpointConfiguration.UseTransport<MsmqTransport>();
-            endpointConfiguration.UsePersistence<InMemoryPersistence>();
-            endpointConfiguration.SendFailedMessagesTo("error");
-            endpointConfiguration.EnableInstallers();
-
-            var routing = transport.Routing();
-            routing.RouteToEndpoint(typeof(PlaceTask), "TaskHandler");
-
-            endpointConfiguration.UseSerialization<JsonSerializer>();
-
-            var endpointInstance = await Endpoint.Start(endpointConfiguration)
-                .ConfigureAwait(false);
-
-            await endpointInstance.Send(task)
-                          .ConfigureAwait(false);
-
-            await endpointInstance.Stop()
-                .ConfigureAwait(false);
-        }
-#endregion
     }
 }

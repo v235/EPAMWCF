@@ -14,7 +14,7 @@ namespace WCFService
     {
         [OperationContract]
         [WebInvoke(UriTemplate = "/download?url={url}", Method = "POST", ResponseFormat = WebMessageFormat.Json)]
-        PlaceTask CreateTask(string url);
+        PlaceTask CreateNewTask(string url);
 
         [OperationContract]
         [WebGet(UriTemplate = "/download/{id}/status", ResponseFormat = WebMessageFormat.Json)]
