@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskHandler
+namespace TaskHandler.BL.DownloadProvider
 {
-    public interface IZipProvider
+    public interface IDownloadProvider
     {
-        void Zip(string path, int id);
+        void ExecuteTask(string downloadPath);
     }
 }

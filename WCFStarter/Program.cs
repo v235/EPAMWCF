@@ -23,8 +23,7 @@ namespace WCFStarter
             }
             Console.WriteLine("Service closed");
             Console.ReadKey();
-            if (container != null)
-                container.Dispose();
+            container.Dispose();
         }
     }
 }

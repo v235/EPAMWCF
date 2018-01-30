@@ -13,22 +13,33 @@ namespace TaskHandler
     {
         static void Main(string[] args)
         {
+
             AsyncMain().GetAwaiter().GetResult();
+
         }
+
         static async Task AsyncMain()
         {
             var endpointConfiguration = new EndpointConfiguration("TaskHandler");
+            var container = new IoC(new WindsorContainer());
+
+            endpointConfiguration.UseContainer<WindsorBuilder>(
+                customizations => { customizations.ExistingContainer(container.Init()); });
 
             #region MsmqConfig
+
             var transport = endpointConfiguration.UseTransport<MsmqTransport>();
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
             endpointConfiguration.SendFailedMessagesTo("error");
             endpointConfiguration.EnableInstallers();
+
             #endregion
 
             #region NoDelayedRetries
+
             var recoverability = endpointConfiguration.Recoverability();
             recoverability.Delayed(delayed => delayed.NumberOfRetries(0));
+
             #endregion
 
             endpointConfiguration.UseSerialization<JsonSerializer>();
@@ -41,6 +52,8 @@ namespace TaskHandler
 
             await endpointInstance.Stop()
                 .ConfigureAwait(false);
+
+            container.Dispose();
         }
     }
 }

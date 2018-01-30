@@ -13,7 +13,7 @@ using WCFService.BL;
 namespace WCFServiceTests
 {
     [TestFixture]
-    public class WCFServerTest
+    public class DownloadServiceTest
     {
         private DownloadService _service;
         private IMainController _mainController;

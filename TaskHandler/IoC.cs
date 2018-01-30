@@ -6,17 +6,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskHandler.BL.DownloadProvider;
+using TaskHandler.BL.ZipProvider;
 
 namespace TaskHandler
 {
-    public static class IoC
+    internal class IoC
     {
-        public static ITaskRepository Resolve()
+        IWindsorContainer _container;
+        public IoC(IWindsorContainer container)
         {
-            var container = new WindsorContainer();
+            _container = container;
+        }
 
-            container.Register(Component.For<ITaskRepository>().ImplementedBy<TaskRepository>());
-            return container.Resolve<ITaskRepository>();
-        } 
+        public IWindsorContainer Init()
+        {
+            _container.Register(
+                Component.For<IDownloadProvider>().ImplementedBy<DownloadProvider>(),
+                Component.For<IZipProvider>().ImplementedBy<ZipProvider>(),
+                Component.For<ITaskRepository>().ImplementedBy<TaskRepository>());
+            return _container;
+        }
+
+        public void Dispose()
+        {
+            _container.Dispose();
+        }
     }
 }

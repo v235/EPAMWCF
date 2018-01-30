@@ -1,14 +1,9 @@
 ﻿using DAL.Model;
 using DAL.Repository;
-using System.IO; 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.IO.Compression;
 
-namespace TaskHandler
+namespace TaskHandler.BL.ZipProvider
 {
     public class ZipProvider:IZipProvider
     {
