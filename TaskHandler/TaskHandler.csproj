@@ -56,6 +56,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Epam.Courses\HTTP.Task\WebLib\bin\Debug\WebLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IoC.cs" />
@@ -68,10 +72,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Epam.Courses\HTTP.Task\WebLib\WebLib.csproj">
-      <Project>{A7035243-14FD-4F51-9AE4-6D02641298C1}</Project>
-      <Name>WebLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{b76c9ef2-bf1b-4ba7-bb0b-c16d273b260f}</Project>
       <Name>DAL</Name>

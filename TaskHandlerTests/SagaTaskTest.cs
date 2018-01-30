@@ -49,6 +49,8 @@ namespace TaskHandlerTests
                 .ConfigureAwait(false);
             var stage2 = (ZipTask)context.SentMessages[0].Message;
             //Assert
+            _mockDownloadProvider.AssertWasCalled(t=>t.ExecuteTask(stage1.ZipPath, stage1.TaskId));
+            _mockZipProvider.AssertWasCalled(t=>t.Zip(stage1.ZipPath, stage1.TaskId));
             Assert.AreEqual(placeTask.TaskId, stage2.TaskId);
         }
     }

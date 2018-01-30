@@ -36,7 +36,7 @@ namespace TaskHandler
         public Task Handle(PlaceTask message, IMessageHandlerContext context)
         {
             log.Info($"newTask, TaskId = {message.TaskId}");
-            _downloadProvider.ExecuteTask(@"D:\\5");
+            _downloadProvider.ExecuteTask(@"D:\\5", message.TaskId);
             var zipTask = new ZipTask()
             {
                 TaskId = message.TaskId,

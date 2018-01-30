@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskHandler.BL.AdapterProvider;
 using TaskHandler.BL.DownloadProvider;
 using TaskHandler.BL.ZipProvider;
+using WebLib;
 
 namespace TaskHandler
 {
@@ -24,7 +26,8 @@ namespace TaskHandler
             _container.Register(
                 Component.For<IDownloadProvider>().ImplementedBy<DownloadProvider>(),
                 Component.For<IZipProvider>().ImplementedBy<ZipProvider>(),
-                Component.For<ITaskRepository>().ImplementedBy<TaskRepository>());
+                Component.For<ITaskRepository>().ImplementedBy<TaskRepository>(),
+                Component.For<IAdapterProvider>().ImplementedBy<AdapterProvider>());
             return _container;
         }
 

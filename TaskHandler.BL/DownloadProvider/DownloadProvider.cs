@@ -1,18 +1,27 @@
 ﻿using System;
+using DAL.Repository;
+using TaskHandler.BL.AdapterProvider;
 using WebLib;
 
 namespace TaskHandler.BL.DownloadProvider
 {
     public class DownloadProvider : IDownloadProvider
     {
-        public void ExecuteTask(string downloadPath)
+        private readonly ITaskRepository _taskRepository;
+        private readonly IAdapterProvider _adapterProvider;
+        public DownloadProvider(ITaskRepository taskRepository, IAdapterProvider adapterProvider)
         {
-            DownloadSite(downloadPath);
+            _taskRepository = taskRepository;
+            _adapterProvider = adapterProvider;
         }
-        private void DownloadSite(string downloadPath)
+        public void ExecuteTask(string downloadPath, int id)
         {
-            SiteDownloader sd = new SiteDownloader();
-            sd.Download(downloadPath, "https://www.tut.by/");
+            var task = _taskRepository.GetTaskById(id);
+            DownloadSite(downloadPath, task.Url );
+        }
+        private void DownloadSite(string downloadPath, string url)
+        {
+            _adapterProvider.Download(downloadPath, url);
         }
     }
 }

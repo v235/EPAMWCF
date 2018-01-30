@@ -39,8 +39,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Epam.Courses\HTTP.Task\WebLib\bin\Debug\WebLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdapterProvider\AdapterProvider.cs" />
+    <Compile Include="AdapterProvider\IAdapterProvider.cs" />
     <Compile Include="DownloadProvider\DownloadProvider.cs" />
     <Compile Include="DownloadProvider\IDownloadProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -48,10 +54,6 @@
     <Compile Include="ZipProvider\ZipProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Epam.Courses\HTTP.Task\WebLib\WebLib.csproj">
-      <Project>{A7035243-14FD-4F51-9AE4-6D02641298C1}</Project>
-      <Name>WebLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{B76C9EF2-BF1B-4BA7-BB0B-C16D273B260F}</Project>
       <Name>DAL</Name>

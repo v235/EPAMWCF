@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskHandler.BL.DownloadProvider
+namespace TaskHandler.BL.AdapterProvider
 {
-    public interface IDownloadProvider
+    public interface IAdapterProvider
     {
-        void ExecuteTask(string downloadPath, int id);
+        void Download(string downloadPath, string url);
     }
 }
