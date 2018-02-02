@@ -50,7 +50,7 @@ namespace WCFService.BL
             TaskEntity task = _taskRepository.GetTaskById(Convert.ToInt32(id));
             if (string.Equals(task.Status, "done", StringComparison.OrdinalIgnoreCase))
             {
-                return _fileProvider.ReadFile(task.DownloadPath, ref fileName);
+                return _fileProvider.ReadFile(Path.GetTempPath()+task.DownloadPath, ref fileName);
             }
 
             return null;

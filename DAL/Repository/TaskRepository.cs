@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.DBProvider;
 using DAL.Model;
 
 namespace DAL.Repository
@@ -12,16 +13,20 @@ namespace DAL.Repository
     public class TaskRepository : ITaskRepository
     {
         string connectionString;
+        private readonly IDBProvider _dbProvider;
 
-        public TaskRepository()
+        public TaskRepository(IDBProvider dbProvider)
         {
-            connectionString= @"data source=EPBYBREW0144\;initial catalog=TaskDB;integrated security=True";
+            connectionString = System.Configuration.ConfigurationManager
+                .ConnectionStrings["TaskDB"].ConnectionString;
+            _dbProvider = dbProvider;
+            _dbProvider.DeployOrUpdateDB(connectionString);
         }
 
         public TaskEntity GetTaskById(int id)
         {
             TaskEntity task = new TaskEntity();
-            string sqlExpression = "SELECT Id, url, status, downloadPath  FROM [TaskHolder] WHERE Id=@id";
+            string sqlExpression = "SELECT Id, url, status, downloadPath  FROM [TaskDB].[dbo].TaskHolder WHERE Id=@id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -56,7 +61,7 @@ namespace DAL.Repository
 
         public int AddTask(string url)
         {
-            string sqlExpression = "INSERT INTO [TaskHolder] (url, status) values(@url, @status)";
+            string sqlExpression = "INSERT INTO [TaskDB].[dbo].TaskHolder (url, status) values(@url, @status)";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -80,7 +85,7 @@ namespace DAL.Repository
 
         public void UpdateTask(TaskEntity task)
         {
-            string sqlExpression = "UPDATE [TaskHolder] SET status = @status, downloadPath=@downloadPath WHERE Id=@id";
+            string sqlExpression = "UPDATE [TaskDB].[dbo].TaskHolder SET status = @status, downloadPath=@downloadPath WHERE Id=@id";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

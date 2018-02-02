@@ -5,21 +5,21 @@ using System.Threading.Tasks;
 using TaskHandler.BL.DownloadProvider;
 using TaskHandler.BL.ZipProvider;
 using System;
+using System.IO;
+using TaskHandler.BL;
 
 namespace TaskHandler
 {
     public class SagaTask :
         Saga<PlaceSagaTask>,
         IAmStartedByMessages<PlaceTask>,
-        IHandleMessages<ZipTask>
+        IHandleMessages<ArchiveTask>
     {
-        private readonly IDownloadProvider _downloadProvider;
-        private readonly IZipProvider _zipProvider;
+        private readonly ITaskManager _taskManager;
 
-        public SagaTask(IDownloadProvider downloadProvider, IZipProvider zipProvider)
+        public SagaTask(ITaskManager taskManager)
         {
-            _downloadProvider = downloadProvider;
-            _zipProvider = zipProvider;
+            _taskManager = taskManager;
         }
 
         static ILog log = LogManager.GetLogger<SagaTask>();
@@ -29,26 +29,21 @@ namespace TaskHandler
             mapper.ConfigureMapping<PlaceTask>(message => message.TaskId)
                 .ToSaga(sagaData => sagaData.TaskId);
 
-            mapper.ConfigureMapping<ZipTask>(message => message.TaskId)
+            mapper.ConfigureMapping<ArchiveTask>(message => message.TaskId)
                 .ToSaga(sagaData => sagaData.TaskId);
         }
 
         public Task Handle(PlaceTask message, IMessageHandlerContext context)
         {
             log.Info($"newTask, TaskId = {message.TaskId}");
-            _downloadProvider.ExecuteTask(@"D:\\5", message.TaskId);
-            var zipTask = new ZipTask()
-            {
-                TaskId = message.TaskId,
-                ZipPath = @"D:\\5"
-            };
+            var zipTask = _taskManager.DownloadSite(message.TaskId);
             return context.SendLocal(zipTask);
         }
 
-        public Task Handle(ZipTask message, IMessageHandlerContext context)
+        public Task Handle(ArchiveTask message, IMessageHandlerContext context)
         {
             log.Info($"newTask, ZipPath = {message.ZipPath}");
-            _zipProvider.Zip(message.ZipPath, message.TaskId);
+            _taskManager.ArchiveSite(message);
             MarkAsComplete();
             return Task.CompletedTask;
         }

@@ -46,7 +46,7 @@
     <Compile Include="PlaceSagaTask.cs" />
     <Compile Include="PlaceTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZipTask.cs" />
+    <Compile Include="ArchiveTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

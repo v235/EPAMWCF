@@ -21,9 +21,9 @@ namespace WCFService.ResponseManager
             return currentContext.OutgoingResponse.StatusCode = HttpStatusCode.OK;
         }
 
-        public HttpStatusCode ResponseBadRequest(WebOperationContext currentContext)
+        public HttpStatusCode ResponseInternalServerError(WebOperationContext currentContext)
         {
-            return currentContext.OutgoingResponse.StatusCode = HttpStatusCode.BadRequest;
+            return currentContext.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
         }
 
         public string ResponseContentType(WebOperationContext currentContext)

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.DBProvider;
+using TaskHandler.BL;
 using TaskHandler.BL.AdapterProvider;
 using TaskHandler.BL.DownloadProvider;
 using TaskHandler.BL.ZipProvider;
@@ -25,7 +27,9 @@ namespace TaskHandler
         {
             _container.Register(
                 Component.For<IDownloadProvider>().ImplementedBy<DownloadProvider>(),
+                Component.For<ITaskManager>().ImplementedBy<TaskManager>(),
                 Component.For<IZipProvider>().ImplementedBy<ZipProvider>(),
+                Component.For<IDBProvider>().ImplementedBy<DBProvider>(),
                 Component.For<ITaskRepository>().ImplementedBy<TaskRepository>(),
                 Component.For<IAdapterProvider>().ImplementedBy<AdapterProvider>());
             return _container;

@@ -14,7 +14,7 @@ namespace WCFService.ResponseManager
 
         HttpStatusCode ResponseOk(WebOperationContext currentContext);
 
-        HttpStatusCode ResponseBadRequest(WebOperationContext currentContext);
+        HttpStatusCode ResponseInternalServerError(WebOperationContext currentContext);
 
         string ResponseContentType(WebOperationContext currentContext);
 

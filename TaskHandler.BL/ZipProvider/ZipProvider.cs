@@ -2,6 +2,7 @@
 using DAL.Repository;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace TaskHandler.BL.ZipProvider
 {
@@ -12,17 +13,28 @@ namespace TaskHandler.BL.ZipProvider
         {
             _taskRepository = taskRepository;
         }
+
         public void Zip(string path, int id)
         {
-            string parent = Path.GetDirectoryName(path);
-            string name = Path.GetFileName(path);
-            string fullName = Path.Combine(parent, name + ".zip");
-            ZipFile.CreateFromDirectory(path,fullName, CompressionLevel.Fastest, true);
+            var fileDir = Directory.GetDirectories(path).FirstOrDefault();
+            string name = fileDir.Substring(fileDir.LastIndexOf('\\') + 1) + ".zip";
+            string fullName = Path.Combine(Path.GetTempPath(), name);
+            FileInfo fi = new FileInfo(fullName);
+            if (fi.Exists)
+            {
+                fi.Delete();
+            }
+
+            ZipFile.CreateFromDirectory(fileDir, fullName, CompressionLevel.Fastest, true);
+
+            Directory.Delete(path, true);
+
             var task = _taskRepository.GetTaskById(id);
             task.Status = "done";
-            task.DownloadPath = fullName;
+            task.DownloadPath = name;
             UpdateTaskStatusInDB(task);
         }
+
         private void UpdateTaskStatusInDB(TaskEntity task)
         {
             _taskRepository.UpdateTask(task);

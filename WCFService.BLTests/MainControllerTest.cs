@@ -70,7 +70,7 @@ namespace WCFService.BLTests
             int TaskId = 1;
             _mockTaskRepository.Stub(t => t.GetTaskById(TaskId))
                 .Return(new TaskEntity() { Id = TaskId, Status = "done", DownloadPath = ""});
-            _mockFileProvider.Stub(t => t.ReadFile("", ref fileName)).Return(new MemoryStream(new byte[10]));
+            _mockFileProvider.Stub(t => t.ReadFile(Path.GetTempPath(), ref fileName)).Return(new MemoryStream(new byte[10]));
             //Act
             var result = _mainController.Download(id, ref fileName);
             //Assert

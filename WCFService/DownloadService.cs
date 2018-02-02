@@ -9,6 +9,7 @@ using System.ServiceModel.Web;
 using Messages;
 using NServiceBus;
 using System.ServiceModel;
+using NLog;
 using WCFService.ResponseManager;
 using WCFService.BL;
 
@@ -19,18 +20,20 @@ namespace WCFService
     {
         private readonly IMainController _mainController;
         private readonly IResponseProvider _responseProvider;
+        private readonly ILogger _logger;
 
         public DownloadService(IMainController mainController,
-            IResponseProvider responseProvider)
+            IResponseProvider responseProvider, ILogger logger)
         {
             _mainController = mainController;
             _responseProvider = responseProvider;
+            _logger = logger;
         }
 
         public PlaceTask CreateNewTask(string url)
         {
             try
-            {
+            {   
                 if (!string.IsNullOrEmpty(url))
                 {
                     var newTask = _mainController.Create(url);
@@ -38,13 +41,14 @@ namespace WCFService
                     return newTask;
                 }
             }
-            catch
+            catch (Exception e)
             {
-                _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+                _logger.Error(e);
+                _responseProvider.ResponseInternalServerError(WebOperationContext.Current);
                 return null;
             }
 
-            _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+            _responseProvider.ResponseInternalServerError(WebOperationContext.Current);
             return null;
         }
 
@@ -59,13 +63,14 @@ namespace WCFService
                     return taskStatus;
                 }
             }
-            catch
+            catch (Exception e)
             {
-                _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+                _logger.Error(e);
+                _responseProvider.ResponseInternalServerError(WebOperationContext.Current);
                 return null;
             }
 
-            _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+            _responseProvider.ResponseInternalServerError(WebOperationContext.Current);
             return null;
         }
 
@@ -86,13 +91,14 @@ namespace WCFService
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
-                _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+                _logger.Error(e);
+                _responseProvider.ResponseInternalServerError(WebOperationContext.Current);
                 return null;
             }
 
-            _responseProvider.ResponseBadRequest(WebOperationContext.Current);
+            _responseProvider.ResponseInternalServerError(WebOperationContext.Current);
             return null;
         }
     }

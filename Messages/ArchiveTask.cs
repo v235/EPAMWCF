@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Messages
 {
-    public class ZipTask :
+    public class ArchiveTask :
         ICommand
     {
         public int TaskId { get; set; }

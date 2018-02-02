@@ -8,26 +8,24 @@ using TaskHandler.BL.DownloadProvider;
 using TaskHandler.BL.ZipProvider;
 using NServiceBus.Testing;
 using Messages;
+using TaskHandler.BL;
 
 namespace TaskHandlerTests
 {
     [TestFixture()]
     public class SagaTaskTest
     {
-        private IDownloadProvider _mockDownloadProvider;
-        private IZipProvider _mockZipProvider;
+        private ITaskManager _mockTaskManager;
         [SetUp]
         public void SetUp()
         {
-            _mockDownloadProvider = MockRepository.GenerateStub<IDownloadProvider>();
-            _mockZipProvider = MockRepository.GenerateStub<IZipProvider>();
-
+            _mockTaskManager = MockRepository.GenerateStub<ITaskManager>();
         }
         [Test]
         public async Task SagaTest()
         {
             //Arrange
-            SagaTask saga = new SagaTask(_mockDownloadProvider, _mockZipProvider)
+            SagaTask saga = new SagaTask(_mockTaskManager)
             {
                 Data = new PlaceSagaTask()
             };
@@ -36,21 +34,23 @@ namespace TaskHandlerTests
             {
                  TaskId = 1
             };
+            var zipTask = new ArchiveTask()
+            {
+                TaskId = placeTask.TaskId,
+                ZipPath = ""
+            };
+            _mockTaskManager.Stub(t => t.DownloadSite(placeTask.TaskId)).Return(zipTask);
             //Act
             await saga.Handle(placeTask, context)
                 .ConfigureAwait(false);
-            var stage1 = (ZipTask)context.SentMessages[0].Message;
-            var zipTask = new ZipTask()
-            {
-                TaskId = stage1.TaskId,
-                ZipPath = stage1.ZipPath
-            };
+            var stage1 = (ArchiveTask)context.SentMessages[0].Message;
+
             await saga.Handle(zipTask, context)
                 .ConfigureAwait(false);
-            var stage2 = (ZipTask)context.SentMessages[0].Message;
+            var stage2 = (ArchiveTask)context.SentMessages[0].Message;
             //Assert
-            _mockDownloadProvider.AssertWasCalled(t=>t.ExecuteTask(stage1.ZipPath, stage1.TaskId));
-            _mockZipProvider.AssertWasCalled(t=>t.Zip(stage1.ZipPath, stage1.TaskId));
+            _mockTaskManager.AssertWasCalled(t=>t.DownloadSite(stage1.TaskId));
+            _mockTaskManager.AssertWasCalled(t=>t.ArchiveSite(stage1));
             Assert.AreEqual(placeTask.TaskId, stage2.TaskId);
         }
     }

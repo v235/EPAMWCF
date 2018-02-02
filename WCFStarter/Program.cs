@@ -4,6 +4,7 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
+using Castle.Core.Logging;
 using WCFService;
 
 
@@ -14,6 +15,7 @@ namespace WCFStarter
         static void Main(string[] args)
         {
             var container = new IoC(new WindsorContainer());
+
             using (var host = new WebServiceHost((DownloadService)container.Init().Resolve<IDownloadService>(),
                 new Uri("http://localhost:8780/WCFService")))
             {

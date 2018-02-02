@@ -7,6 +7,7 @@ using Rhino.Mocks;
 using System.Net;
 using DAL.Model;
 using Messages;
+using NLog;
 using WCFService.ResponseManager;
 using WCFService.BL;
 
@@ -18,13 +19,16 @@ namespace WCFServiceTests
         private DownloadService _service;
         private IMainController _mainController;
         private IResponseProvider _mockResponseProvider;
+        private ILogger _mockLogger;
+        
 
         [SetUp]
         public void SetUp()
         {
             _mainController = MockRepository.GenerateStub<IMainController>();
             _mockResponseProvider = MockRepository.GenerateStub<IResponseProvider>();
-            _service = new DownloadService(_mainController, _mockResponseProvider);
+            _mockLogger=MockRepository.GenerateStub<ILogger>();
+            _service = new DownloadService(_mainController, _mockResponseProvider, _mockLogger);
         }
 
         [Test]
@@ -46,15 +50,15 @@ namespace WCFServiceTests
         [TestCase(null)]
         [TestCase("")]
         [TestCase("test")]
-        public void CreateTask_should_return_BadRequest(string url)
+        public void CreateTask_should_return_InternalServerError(string url)
         {
             //Arrange
             _mainController.Stub(t => t.Create(url)).Throw(new Exception());
-            _mockResponseProvider.Stub(t => t.ResponseCreated(null)).Return(HttpStatusCode.BadRequest);
+            _mockResponseProvider.Stub(t => t.ResponseCreated(null)).Return(HttpStatusCode.InternalServerError);
             //Act
             _service.CreateNewTask(url);
             //Assert
-            _mockResponseProvider.AssertWasCalled(t => t.ResponseBadRequest(null));
+            _mockResponseProvider.AssertWasCalled(t => t.ResponseInternalServerError(null));
         }
 
         [Test]
@@ -78,15 +82,15 @@ namespace WCFServiceTests
         [TestCase(null)]
         [TestCase("")]
         [TestCase("1")]
-        public void GetTaskStatus_should_return_BadRequest(string id)
+        public void GetTaskStatus_should_return_InternalServerError(string id)
         {
             //Arrange
             _mainController.Stub(t => t.GetStatus(id)).Throw(new Exception());
-            _mockResponseProvider.Stub(t => t.ResponseBadRequest(null)).Return(HttpStatusCode.BadRequest);
+            _mockResponseProvider.Stub(t => t.ResponseInternalServerError(null)).Return(HttpStatusCode.InternalServerError);
             //Act
             _service.GetTaskStatus(id);
             //Assert
-            _mockResponseProvider.AssertWasCalled(t => t.ResponseBadRequest(null));
+            _mockResponseProvider.AssertWasCalled(t => t.ResponseInternalServerError(null));
         }
 
         [Test]
@@ -98,7 +102,7 @@ namespace WCFServiceTests
             MemoryStream stream=new MemoryStream(new byte[10]);
             _mainController.Stub(t => t.Download(id, ref fileName)).Return(stream);
             _mockResponseProvider.Stub(t => t.ResponseContentType(null)).Return("");
-            _mockResponseProvider.Stub(t => t.ResponseBadRequest(null)).Return(HttpStatusCode.OK);
+            _mockResponseProvider.Stub(t => t.ResponseInternalServerError(null)).Return(HttpStatusCode.OK);
             //Act
             var result = _service.Download(id);
             //Assert
@@ -112,16 +116,16 @@ namespace WCFServiceTests
         [TestCase(null)]
         [TestCase("")]
         [TestCase("1")]
-        public void Download_should_return_BadRequest(string id)
+        public void Download_should_return_InternalServerError(string id)
         {
             //Arrange
             string fileName = string.Empty;
             _mainController.Stub(t => t.Download(id, ref fileName)).Throw(new Exception());
-            _mockResponseProvider.Stub(t => t.ResponseBadRequest(null)).Return(HttpStatusCode.BadRequest);
+            _mockResponseProvider.Stub(t => t.ResponseInternalServerError(null)).Return(HttpStatusCode.InternalServerError);
             //Act
             _service.Download(id);
             //Assert
-            _mockResponseProvider.AssertWasCalled(t => t.ResponseBadRequest(null));
+            _mockResponseProvider.AssertWasCalled(t => t.ResponseInternalServerError(null));
         }
     }
 }

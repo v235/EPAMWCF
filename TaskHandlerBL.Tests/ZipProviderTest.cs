@@ -13,15 +13,14 @@ namespace TaskHandlerBL.Tests
     class ZipProviderTest
     {
         private ITaskRepository _mockTaskRepository;
-        string _testDirectoryPath =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test");
+        private string _testDirectoryPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test");
 
         private FileInfo fi;
 
         [SetUp]
         public void Setup()
         {
-            Directory.CreateDirectory(_testDirectoryPath);
+            Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test", "Test"));
         }
 
         [Test]
@@ -43,15 +42,14 @@ namespace TaskHandlerBL.Tests
             //Assert
             _mockTaskRepository.AssertWasCalled(t=>t.GetTaskById(1));
             _mockTaskRepository.AssertWasCalled(t=>t.UpdateTask(task));
-            fi = new FileInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.zip"));
+            fi = new FileInfo(Path.Combine(Path.GetTempPath(), "Test.zip"));
             Assert.AreEqual(fi.Exists, true);
         }
 
         [TearDown]
         public void TearDown()
         {
-            Directory.Delete(_testDirectoryPath);
-            File.Delete(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test.zip"));
+            File.Delete(Path.Combine(Path.GetTempPath(), "Test.zip"));
         }
     }
 }
