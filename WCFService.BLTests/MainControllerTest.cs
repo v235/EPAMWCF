@@ -34,12 +34,13 @@ namespace WCFService.BLTests
         {
             //Arrange
             string url = "tut.by";
+            string status = "pending";
             int expectedId = 1;
-            _mockTaskRepository.Stub(t => t.AddTask(url)).Return(expectedId);
+            _mockTaskRepository.Stub(t => t.AddTask(url, status)).Return(expectedId);
             //Act
             var result = _mainController.Create(url);
             //Assert
-            _mockTaskRepository.AssertWasCalled(t => t.AddTask(url));
+            _mockTaskRepository.AssertWasCalled(t => t.AddTask(url, status));
             _mockNsBusProvider.AssertWasCalled(t => t.SendTaskCreatedMessage(result));
             Assert.AreEqual(result.TaskId, expectedId);
         }

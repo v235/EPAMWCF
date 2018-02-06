@@ -59,7 +59,7 @@ namespace DAL.Repository
             }
         }
 
-        public int AddTask(string url)
+        public int AddTask(string url, string status)
         {
             string sqlExpression = "INSERT INTO [TaskDB].[dbo].TaskHolder (url, status) values(@url, @status)";
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -68,7 +68,7 @@ namespace DAL.Repository
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
                 SqlParameter urlParam = new SqlParameter("@url", url);
                 command.Parameters.Add(urlParam);
-                SqlParameter statusParam = new SqlParameter("@status", "processing");
+                SqlParameter statusParam = new SqlParameter("@status", status);
                 command.Parameters.Add(statusParam);
                 try
                 {

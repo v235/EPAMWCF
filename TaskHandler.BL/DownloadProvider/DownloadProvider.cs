@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using DAL.Repository;
 using TaskHandler.BL.AdapterProvider;
 using WebLib;
@@ -18,7 +19,9 @@ namespace TaskHandler.BL.DownloadProvider
         public void ExecuteTask(string downloadPath, int id)
         {
             var task = _taskRepository.GetTaskById(id);
-            DownloadSite(downloadPath, task.Url );
+            task.Status = "processing";
+            _taskRepository.UpdateTask(task);
+             DownloadSite(downloadPath, task.Url );
         }
         private void DownloadSite(string downloadPath, string url)
         {

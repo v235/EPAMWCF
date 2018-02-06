@@ -28,7 +28,7 @@ namespace WCFService.BL
         {
             PlaceTask cTask = new PlaceTask
             {
-                TaskId = _taskRepository.AddTask(url)
+                TaskId = _taskRepository.AddTask(url, "pending")
             };
             _nsBusProvider.SendTaskCreatedMessage(cTask);
             return cTask;
