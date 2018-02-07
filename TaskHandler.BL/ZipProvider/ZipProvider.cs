@@ -17,22 +17,32 @@ namespace TaskHandler.BL.ZipProvider
         public void Zip(string path, int id)
         {
             var fileDir = Directory.GetDirectories(path).FirstOrDefault();
-            string name = fileDir.Substring(fileDir.LastIndexOf('\\') + 1) + ".zip";
-            string fullName = Path.Combine(Path.GetTempPath(), name);
-            FileInfo fi = new FileInfo(fullName);
-            if (fi.Exists)
+            if (fileDir != null)
             {
-                fi.Delete();
+                string name = fileDir.Substring(fileDir.LastIndexOf('\\') + 1) + ".zip";
+                string fullName = Path.Combine(Path.GetTempPath(), name);
+                FileInfo fi = new FileInfo(fullName);
+                if (fi.Exists)
+                {
+                    fi.Delete();
+                }
+
+                ZipFile.CreateFromDirectory(fileDir, fullName, CompressionLevel.Fastest, true);
+
+                Directory.Delete(path, true);
+
+                var task = _taskRepository.GetTaskById(id);
+                task.Status = "done";
+                task.DownloadPath = name;
+                UpdateTaskStatusInDB(task);
             }
-
-            ZipFile.CreateFromDirectory(fileDir, fullName, CompressionLevel.Fastest, true);
-
-            Directory.Delete(path, true);
-
-            var task = _taskRepository.GetTaskById(id);
-            task.Status = "done";
-            task.DownloadPath = name;
-            UpdateTaskStatusInDB(task);
+            else
+            {
+                var task = _taskRepository.GetTaskById(id);
+                task.Status = "failed";
+                task.DownloadPath = string.Empty;
+                UpdateTaskStatusInDB(task);
+            }
         }
 
         private void UpdateTaskStatusInDB(TaskEntity task)

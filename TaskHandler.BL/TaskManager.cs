@@ -22,6 +22,7 @@ namespace TaskHandler.BL
         public ArchiveTask DownloadSite(int id)
         {
             string dowTempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(dowTempPath);
             _downloadProvider.ExecuteTask(dowTempPath, id);
             return new ArchiveTask()
             {

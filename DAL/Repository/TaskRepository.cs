@@ -120,28 +120,6 @@ namespace DAL.Repository
                     throw e;
                 }
             }
-            //
-
-            //    string sqlExpression = "UPDATE [TaskDB].[dbo].TaskHolder SET status = @status, downloadPath=@downloadPath WHERE Id=@id";
-            //using (SqlConnection connection = new SqlConnection(connectionString))
-            //{
-            //    connection.Open();
-            //    SqlCommand command = new SqlCommand(sqlExpression, connection);
-            //SqlParameter idParam = new SqlParameter("@id", task.Id);
-            //command.Parameters.Add(idParam);
-            //SqlParameter statusParam = new SqlParameter("@status", task.Status);
-            //command.Parameters.Add(statusParam);
-            //SqlParameter downloadPathParam = new SqlParameter("@downloadPath", task.DownloadPath);
-            //command.Parameters.Add(downloadPathParam);
-            //    try
-            //    {
-            //        command.ExecuteNonQuery();
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        throw e;
-            //    }
-            // }
         }
 
     }
