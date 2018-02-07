@@ -17,7 +17,7 @@ namespace WCFService.BL.NSBus
 
         private async void SendCommand(PlaceTask task)
         {
-            var endpointConfiguration = new EndpointConfiguration("WCFService");
+            var endpointConfiguration = new EndpointConfiguration("TaskHandler");
 
             var transport = endpointConfiguration.UseTransport<MsmqTransport>();
             endpointConfiguration.UsePersistence<InMemoryPersistence>();

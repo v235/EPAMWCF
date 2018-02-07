@@ -1,4 +1,6 @@
-﻿using DAL.Model;
+﻿using System;
+using System.Threading.Tasks;
+using DAL.Model;
 
 namespace DAL.Repository
 {

@@ -8,6 +8,6 @@ namespace TaskHandler.BL.DownloadProvider
 {
     public interface IDownloadProvider
     {
-        void ExecuteTask(string downloadPath, int id);
+         void ExecuteTask(string downloadPath, int id);
     }
 }

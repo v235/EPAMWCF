@@ -60,6 +60,5 @@
   <ItemGroup>
     <Content Include="Database\0000.sql" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

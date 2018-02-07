@@ -28,7 +28,7 @@ namespace Client
                         string status = string.Empty;
                         do
                         {
-                            Thread.Sleep(5000);
+                            Thread.Sleep(1000);
                             status = await client.GETTaskStatus(taskId);
                             Console.WriteLine("Task status is: {0}", status);
                         } while (!status.Equals("done"));

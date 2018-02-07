@@ -85,26 +85,64 @@ namespace DAL.Repository
 
         public void UpdateTask(TaskEntity task)
         {
-            string sqlExpression = "UPDATE [TaskDB].[dbo].TaskHolder SET status = @status, downloadPath=@downloadPath WHERE Id=@id";
+            //new
+            string sqlExpressionDelete = "DELETE FROM [TaskDB].[dbo].TaskHolder WHERE Id=@id;";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                SqlParameter idParam = new SqlParameter("@id", task.Id);
-                command.Parameters.Add(idParam);
-                SqlParameter statusParam = new SqlParameter("@status", "done");
-                command.Parameters.Add(statusParam);
-                SqlParameter downloadPathParam = new SqlParameter("@downloadPath", task.DownloadPath);
-                command.Parameters.Add(downloadPathParam);
+                SqlCommand command = new SqlCommand(sqlExpressionDelete, connection);
+                SqlParameter idParamDel = new SqlParameter("@id", task.Id);
+                command.Parameters.Add(idParamDel);
                 try
                 {
                     command.ExecuteNonQuery();
+                    string sqlExpressionIdentityON = "SET IDENTITY_INSERT [TaskDB].[dbo].TaskHolder ON";
+                    SqlCommand commandOn = new SqlCommand(sqlExpressionIdentityON, connection);
+                    commandOn.ExecuteNonQuery();
+                    string sqlExpressionUpdate =
+                        "INSERT INTO [TaskDB].[dbo].TaskHolder(Id, url, status, downloadPath)VALUES(@id, @url, @status, @downloadPath)";
+                    SqlCommand commandUp = new SqlCommand(sqlExpressionUpdate, connection);
+                    SqlParameter idParam = new SqlParameter("@id", task.Id);
+                    commandUp.Parameters.Add(idParam);
+                    SqlParameter urlParam = new SqlParameter("@url", task.Url);
+                    commandUp.Parameters.Add(urlParam);
+                    SqlParameter statusParam = new SqlParameter("@status", task.Status);
+                    commandUp.Parameters.Add(statusParam);
+                    SqlParameter downloadPathParam = new SqlParameter("@downloadPath", task.DownloadPath);
+                    commandUp.Parameters.Add(downloadPathParam);
+                    commandUp.ExecuteNonQuery();
+                    string sqlExpressionIdentityOff = "SET IDENTITY_INSERT [TaskDB].[dbo].TaskHolder OFF";
+                    SqlCommand commandOff = new SqlCommand(sqlExpressionIdentityOff, connection);
+                    commandOff.ExecuteNonQuery();
                 }
                 catch (Exception e)
                 {
                     throw e;
                 }
             }
+            //
+
+            //    string sqlExpression = "UPDATE [TaskDB].[dbo].TaskHolder SET status = @status, downloadPath=@downloadPath WHERE Id=@id";
+            //using (SqlConnection connection = new SqlConnection(connectionString))
+            //{
+            //    connection.Open();
+            //    SqlCommand command = new SqlCommand(sqlExpression, connection);
+            //SqlParameter idParam = new SqlParameter("@id", task.Id);
+            //command.Parameters.Add(idParam);
+            //SqlParameter statusParam = new SqlParameter("@status", task.Status);
+            //command.Parameters.Add(statusParam);
+            //SqlParameter downloadPathParam = new SqlParameter("@downloadPath", task.DownloadPath);
+            //command.Parameters.Add(downloadPathParam);
+            //    try
+            //    {
+            //        command.ExecuteNonQuery();
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        throw e;
+            //    }
+            // }
         }
+
     }
 }

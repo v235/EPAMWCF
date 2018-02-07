@@ -16,13 +16,16 @@ namespace TaskHandler.BL.DownloadProvider
             _taskRepository = taskRepository;
             _adapterProvider = adapterProvider;
         }
+
         public void ExecuteTask(string downloadPath, int id)
         {
             var task = _taskRepository.GetTaskById(id);
             task.Status = "processing";
+            task.DownloadPath = string.Empty;
             _taskRepository.UpdateTask(task);
-             DownloadSite(downloadPath, task.Url );
+            DownloadSite(downloadPath, task.Url);
         }
+
         private void DownloadSite(string downloadPath, string url)
         {
             _adapterProvider.Download(downloadPath, url);
