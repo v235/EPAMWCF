@@ -64,16 +64,9 @@ namespace DAL.Repository
                 command.Parameters.Add(urlParam);
                 SqlParameter statusParam = new SqlParameter("@status", status);
                 command.Parameters.Add(statusParam);
-                try
-                {
-                    command.ExecuteNonQuery();
-                    command.CommandText = "SELECT @@IDENTITY";
-                    return Convert.ToInt32(command.ExecuteScalar());
-                }
-                catch (Exception e)
-                {
-                    throw e;
-                }
+                command.ExecuteNonQuery();
+                command.CommandText = "SELECT @@IDENTITY";
+                return Convert.ToInt32(command.ExecuteScalar());
             }
         }
 
@@ -87,32 +80,25 @@ namespace DAL.Repository
                 SqlCommand command = new SqlCommand(sqlExpressionDelete, connection);
                 SqlParameter idParamDel = new SqlParameter("@id", task.Id);
                 command.Parameters.Add(idParamDel);
-                try
-                {
-                    command.ExecuteNonQuery();
-                    string sqlExpressionIdentityON = "SET IDENTITY_INSERT [TaskDB].[dbo].TaskHolder ON";
-                    SqlCommand commandOn = new SqlCommand(sqlExpressionIdentityON, connection);
-                    commandOn.ExecuteNonQuery();
-                    string sqlExpressionUpdate =
-                        "INSERT INTO [TaskDB].[dbo].TaskHolder(Id, url, status, downloadPath)VALUES(@id, @url, @status, @downloadPath)";
-                    SqlCommand commandUp = new SqlCommand(sqlExpressionUpdate, connection);
-                    SqlParameter idParam = new SqlParameter("@id", task.Id);
-                    commandUp.Parameters.Add(idParam);
-                    SqlParameter urlParam = new SqlParameter("@url", task.Url);
-                    commandUp.Parameters.Add(urlParam);
-                    SqlParameter statusParam = new SqlParameter("@status", task.Status);
-                    commandUp.Parameters.Add(statusParam);
-                    SqlParameter downloadPathParam = new SqlParameter("@downloadPath", task.DownloadPath);
-                    commandUp.Parameters.Add(downloadPathParam);
-                    commandUp.ExecuteNonQuery();
-                    string sqlExpressionIdentityOff = "SET IDENTITY_INSERT [TaskDB].[dbo].TaskHolder OFF";
-                    SqlCommand commandOff = new SqlCommand(sqlExpressionIdentityOff, connection);
-                    commandOff.ExecuteNonQuery();
-                }
-                catch (Exception e)
-                {
-                    throw e;
-                }
+                command.ExecuteNonQuery();
+                string sqlExpressionIdentityON = "SET IDENTITY_INSERT [TaskDB].[dbo].TaskHolder ON";
+                SqlCommand commandOn = new SqlCommand(sqlExpressionIdentityON, connection);
+                commandOn.ExecuteNonQuery();
+                string sqlExpressionUpdate =
+                    "INSERT INTO [TaskDB].[dbo].TaskHolder(Id, url, status, downloadPath)VALUES(@id, @url, @status, @downloadPath)";
+                SqlCommand commandUp = new SqlCommand(sqlExpressionUpdate, connection);
+                SqlParameter idParam = new SqlParameter("@id", task.Id);
+                commandUp.Parameters.Add(idParam);
+                SqlParameter urlParam = new SqlParameter("@url", task.Url);
+                commandUp.Parameters.Add(urlParam);
+                SqlParameter statusParam = new SqlParameter("@status", task.Status);
+                commandUp.Parameters.Add(statusParam);
+                SqlParameter downloadPathParam = new SqlParameter("@downloadPath", task.DownloadPath);
+                commandUp.Parameters.Add(downloadPathParam);
+                commandUp.ExecuteNonQuery();
+                string sqlExpressionIdentityOff = "SET IDENTITY_INSERT [TaskDB].[dbo].TaskHolder OFF";
+                SqlCommand commandOff = new SqlCommand(sqlExpressionIdentityOff, connection);
+                commandOff.ExecuteNonQuery();
             }
         }
 
