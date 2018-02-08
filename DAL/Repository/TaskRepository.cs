@@ -34,27 +34,21 @@ namespace DAL.Repository
                 {
                     SqlParameter idParam = new SqlParameter("@id", id);
                     command.Parameters.Add(idParam);
-                    try
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                task.Id = reader.GetInt32(0);
-                                task.Url = reader.GetString(1);
-                                task.Status = reader.GetString(2);
-                                if (reader.GetValue(3) == null)
-                                    task.DownloadPath = string.Empty;
-                                else
-                                    task.DownloadPath = reader.GetValue(3).ToString();
-                            }
+                            task.Id = reader.GetInt32(0);
+                            task.Url = reader.GetString(1);
+                            task.Status = reader.GetString(2);
+                            if (reader.GetValue(3) == null)
+                                task.DownloadPath = string.Empty;
+                            else
+                                task.DownloadPath = reader.GetValue(3).ToString();
                         }
-                        return task;
                     }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
+
+                    return task;
                 }
             }
         }

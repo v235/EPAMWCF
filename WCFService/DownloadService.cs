@@ -59,8 +59,11 @@ namespace WCFService
                 if (!string.IsNullOrEmpty(id))
                 {
                     var taskStatus = _mainController.GetStatus(id);
-                    _responseProvider.ResponseOk(WebOperationContext.Current);
-                    return taskStatus;
+                    if (taskStatus != null)
+                    {
+                        _responseProvider.ResponseOk(WebOperationContext.Current);
+                        return taskStatus;
+                    }
                 }
             }
             catch (Exception e)
