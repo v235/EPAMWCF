@@ -25,28 +25,14 @@ namespace TaskHandler
 
             endpointConfiguration.UseContainer<WindsorBuilder>(
                 customizations => { customizations.ExistingContainer(container.Init()); });
-
-            #region MsmqConfig
-
-            var transport = endpointConfiguration.UseTransport<MsmqTransport>();
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
             endpointConfiguration.SendFailedMessagesTo("error");
             endpointConfiguration.EnableInstallers();
-
-            #endregion
-
-            #region NoDelayedRetries
-
             var recoverability = endpointConfiguration.Recoverability();
             recoverability.Delayed(delayed => delayed.NumberOfRetries(0));
-
-            #endregion
-
             endpointConfiguration.UseSerialization<JsonSerializer>();
-
             var endpointInstance = await Endpoint.Start(endpointConfiguration)
                 .ConfigureAwait(false);
-
             Console.WriteLine("Press Enter to exit.");
             Console.ReadLine();
 
